@@ -67,11 +67,11 @@ export const productosMock: Producto[] = [
   },
       {
     id: 9,
-    nombre: 'Campera de Cuero Ecológico',
-    categoria: 'Abrigos',
-    precio: 85000,
+    nombre: 'Zapatillas de lona',
+    categoria: 'Zapatillas',
+    precio: 150000,
     stock: 5,
-    descripcion: 'Campera estilo biker con cierres metálicos y forro interior.'
+    descripcion: 'Zapatillas con dibujos personalizados de cada personaje animado.'
   },
     {
     id: 10,

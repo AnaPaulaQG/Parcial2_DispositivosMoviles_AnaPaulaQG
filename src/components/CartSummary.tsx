@@ -1,7 +1,7 @@
 import type { Producto, FormaPago } from '../types/producto';
 
 interface CartSummaryProps {
-  carrito: Producto[];
+  carrito: ItemCarrito[];
   total: number;
   formaPago: FormaPago;
   formasDePago: FormaPago[];

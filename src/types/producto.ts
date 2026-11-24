@@ -8,3 +8,8 @@ export interface Producto {
   stock: number;
   descripcion: string;
 }
+
+export interface ItemCarrito {
+  producto: Producto;
+  cantidad: number;
+}

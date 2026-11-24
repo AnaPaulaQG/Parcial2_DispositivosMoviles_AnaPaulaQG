@@ -1,4 +1,4 @@
-import { Producto, FormaPago } from '../types/producto';
+import type { Producto, FormaPago } from '../types/producto';
 
 export const productosMock: Producto[] = [
   {

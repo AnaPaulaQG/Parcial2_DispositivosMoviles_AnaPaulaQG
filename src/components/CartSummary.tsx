@@ -1,11 +1,11 @@
-import type { Producto, FormaPago } from '../types/producto';
+import type { ItemCarrito, FormaPago } from '../types/producto';
 
 interface CartSummaryProps {
   carrito: ItemCarrito[];
   total: number;
   formaPago: FormaPago;
   formasDePago: FormaPago[];
-  onEliminar: (index: number) => void;
+  onEliminar: (productoId: number) => void;
   onFormaPagoChange: (pago: FormaPago) => void;
 }
 
@@ -25,10 +25,10 @@ export const CartSummary = ({
       ) : (
         <>
           <ul>
-            {carrito.map((item, index) => (
-              <li key={`${item.id}-${index}`}>
-                {item.nombre} - ${item.precio}{' '}
-                <button onClick={() => onEliminar(index)}>Quitar</button>
+            {carrito.map((item) => (
+              <li key={item.producto.id}>
+                {item.producto.nombre} (x{item.cantidad}) - ${item.producto.precio * item.cantidad}{' '}
+                <button onClick={() => onEliminar(item.producto.id)}>Quitar</button>
               </li>
             ))}
           </ul>

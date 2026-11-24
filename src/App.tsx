@@ -1,122 +1,80 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import type { Producto } from './types/producto';
+import { productosMock, formasDePago } from './data/mockData';
+import { useCarrito } from './hooks/useCarrito';
+import { Header } from './components/Header';
+import { FilterPanel } from './components/FilterPanel';
+import { ProductList } from './components/ProductList';
+import { CartSummary } from './components/CartSummary';
 
-function App() {
-  const [count, setCount] = useState(0)
+export function App() {
+  // 1. Estado tipado para la lista de productos
+  const [productos] = useState<Producto[]>(productosMock);
+
+  // 2. Dos estados tipados para el filtrado en tiempo real
+  const [busqueda, setBusqueda] = useState<string>('');
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>('Todas');
+
+  // 3. Hook personalizado con el estado y lógica del carrito
+  const {
+    carrito,
+    formaPago,
+    total,
+    cantidadTotalItems,
+    agregarAlCarrito,
+    eliminarDelCarrito,
+    cambiarFormaPago,
+  } = useCarrito();
+
+  // Obtener categorías únicas dinámicamente desde tus productos
+  const categorias: string[] = Array.from(
+    new Set(productos.map((prod) => prod.categoria))
+  );
+
+  // Filtrar productos en tiempo real según texto y categoría
+  const productosFiltrados: Producto[] = productos.filter((prod) => {
+    const coincideTexto =
+      prod.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      prod.descripcion.toLowerCase().includes(busqueda.toLowerCase());
+
+    const coincideCategoria =
+      categoriaSeleccionada === 'Todas' ||
+      prod.categoria === categoriaSeleccionada;
+
+    return coincideTexto && coincideCategoria;
+  });
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div>
+      <Header cantidadItems={cantidadTotalItems} />
 
-      <div className="ticks"></div>
+      <main>
+        <FilterPanel
+          busqueda={busqueda}
+          categoriaSeleccionada={categoriaSeleccionada}
+          categorias={categorias}
+          onBusquedaChange={setBusqueda}
+          onCategoriaChange={setCategoriaSeleccionada}
+        />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', alignItems: 'start' }}>
+          <ProductList
+            productos={productosFiltrados}
+            onAgregarAlCarrito={agregarAlCarrito}
+          />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          <CartSummary
+            carrito={carrito}
+            total={total}
+            formaPago={formaPago}
+            formasDePago={formasDePago}
+            onEliminar={eliminarDelCarrito}
+            onFormaPagoChange={cambiarFormaPago}
+          />
+        </div>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
